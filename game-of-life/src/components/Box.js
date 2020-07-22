@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const Box = (props) => {
-    return (
-        <div className="box" id={props.id}>
+    const [status, setStatus] = useState(false)
 
-        </div>
+    const setCellStatus = () => {
+        setStatus(!status)
+    }
+
+    return (
+        <div onClick={setCellStatus} className="box" id={props.id} style={{backgroundColor: `${status ? '#fffb00' : '#747474'}`}}/>
     )
 }
 
