@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 
 const Box = (props) => {
-    const [status, setStatus] = useState(false)
-
     const setCellStatus = () => {
-        setStatus(!status)
+        props.setBoxStatus(props.row, props.column)
     }
-
+    
     return (
-        <div onClick={setCellStatus} className="box" id={props.id} style={{backgroundColor: `${status ? '#fffb00' : '#747474'}`}}/>
+        <div onClick={setCellStatus} className={props.boxClass} id={props.id}/>
     )
 }
 

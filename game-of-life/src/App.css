@@ -13,6 +13,10 @@ body {
     display: flex;
 }
 
+.grid-container {
+    margin: auto auto;
+}
+
 .grid {
     display: flex;
     flex-wrap: wrap;
@@ -21,8 +25,16 @@ body {
     margin: auto auto;
 }
 
-.box {
+.box-alive {
     width: 10px;
     height: 10px;
-    border: solid 1px #fff;
+    border: solid 1px rgb(197, 197, 197);
+    background-color: #fffb00;
+}
+
+.box-dead {
+    width: 10px;
+    height: 10px;
+    border: solid 1px rgb(197, 197, 197);
+    background-color: #747474;
 }
