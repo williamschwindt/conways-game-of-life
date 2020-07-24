@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import Box from './Box'
 
 const Grid = () => {
-    const rows = 20
-    const columns = 20
+    const rows = 25
+    const columns = 25
 
     // 2D array
     const [grid, setGrid] = useState(new Array(rows).fill(false).map(() => new Array(columns).fill(false)))
@@ -24,22 +24,28 @@ const Grid = () => {
         }
     }
 
+
     //update cell on click, sets new grid, calls updateBox
     function setBoxStatus(row, column) {
-        let gridCopy = grid
+        console.log("setBoxStatus ran")
+        
 
-        if (gridCopy[row][column]) {
-            gridCopy[row][column] = false
+        if (grid[row][column]) {
+            grid[row][column] = false
+            // document.getElementById(`${row}_${column}`).classList.remove('box-alive')
+            // document.getElementById(`${row}_${column}`).classList.add('box-dead')
         } else {
-            gridCopy[row][column] = true
+            grid[row][column] = true
+            // document.getElementById(`${row}_${column}`).classList.remove('box-dead')
+            // document.getElementById(`${row}_${column}`).classList.add('box-alive')
         }
 
-        setGrid(gridCopy)
         updateBox()
     }
 
     //updates rendered boxes (yellow or grey)
     const updateBox = () => {
+        console.log('updateBox ran')
         let newBoxList = []
         for(let i = 0; i < rows; i++) {
             for(let j = 0; j < columns; j++) {
@@ -62,7 +68,8 @@ const Grid = () => {
     */
 
     const play = () => {
-        setIsPlaying(true)
+        // setIsPlaying(true)
+        findNewGrid()
     }
 
     const pause = () => {
@@ -75,7 +82,6 @@ const Grid = () => {
         gridCopy[row][col] = false
 
         setGrid(gridCopy)
-        updateBox()
     }
 
     const reviveCell = (row, col) => {
@@ -84,10 +90,10 @@ const Grid = () => {
         gridCopy[row][col] = true
 
         setGrid(gridCopy)
-        updateBox()
     }
 
     const findNewGrid = () => {
+        console.log('findNewGrid ran')
         let gridCopy = grid
         let neirborsArray = findNeirbors()
         let neirborsCount = 0
@@ -106,9 +112,11 @@ const Grid = () => {
                 neirborsCount += 1
             }
         }
+        updateBox()
     }
 
     const findNeirbors = () => {
+        console.log('findNairbors ran')
         let gridCopy = grid
         const wholeGridNeirbors = []
 
@@ -177,8 +185,6 @@ const Grid = () => {
         if(isPlaying) {
             const interval = setInterval(() => {
                 findNewGrid()
-                console.log(generations)
-                setGenerations(generations + 1)
             }, 250)
             return () => clearInterval(interval)
         }
@@ -188,9 +194,9 @@ const Grid = () => {
     return (
         <div className="grid-container">
             <div className="grid" style={{width: `${rows * 12}px`}}>
-                {boxList.map(box => {
-                    return box
-                })}
+                    {boxList.map(box => {
+                        return box
+                    })}
             </div>
             <div className="buttons">
                 <h2 onClick={play}>Play</h2>
