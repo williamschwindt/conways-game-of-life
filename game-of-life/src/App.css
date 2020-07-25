@@ -1,1 +1,40 @@
+html {
+    background-color: rgb(251, 251, 251);
+    height: 100%;
+}
 
+body {
+    height: 100%;
+    margin: 0;
+}
+
+#root {
+    height: 100%;
+    display: flex;
+}
+
+.grid-container {
+    margin: auto auto;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #000;
+    padding: 1px;
+    margin: auto auto;
+}
+
+.box-alive {
+    width: 10px;
+    height: 10px;
+    border: solid 1px rgb(197, 197, 197);
+    background-color: #fffb00;
+}
+
+.box-dead {
+    width: 10px;
+    height: 10px;
+    border: solid 1px rgb(197, 197, 197);
+    background-color: #747474;
+}
