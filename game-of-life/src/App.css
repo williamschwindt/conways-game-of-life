@@ -1,11 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 html {
-    background-color: rgb(251, 251, 251);
     height: 100%;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 67.5%;
+}
+
+html:hover {
+    cursor: auto;
 }
 
 body {
     height: 100%;
     margin: 0;
+    background-color: rgb(59, 59, 59);
+    color: #fff;
 }
 
 #root {
@@ -13,8 +22,38 @@ body {
     display: flex;
 }
 
-.grid-container {
-    margin: auto auto;
+button:hover {
+    cursor: pointer;
+}
+
+.game-container {
+    width: 100%;
+    margin: 5px 20px;
+    display: flex;
+}
+
+.info-container {
+    width: 80%;
+}
+
+.info-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 90%;
+}
+
+.info-container h2 {
+    margin-bottom: 15px;
+    width: 90%;
+}
+
+.info-container p{
+    width: 80%;
+    margin-bottom: 20px;
+}
+
+.grid-btns {
+    display: flex;
 }
 
 .grid {
@@ -22,19 +61,50 @@ body {
     flex-wrap: wrap;
     border: 1px solid #000;
     padding: 1px;
-    margin: auto auto;
+}
+
+.grid:hover {
+    cursor: pointer;
+}
+
+.buttons {
+    width: 20%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.buttons button,
+.buttons input {
+    font-size: 1.2rem;
+}
+
+.main-btns {
+    margin-bottom: 5px;
+}
+
+.main-btns button {
+    font-size: 1rem;
+}
+
+.skip-btn {
+    margin-top: 5px;
+}
+
+.skip-btn button {
+    font-size: 1rem;
 }
 
 .box-alive {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border: solid 1px rgb(197, 197, 197);
     background-color: #fffb00;
 }
 
 .box-dead {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border: solid 1px rgb(197, 197, 197);
     background-color: #747474;
 }
