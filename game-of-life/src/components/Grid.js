@@ -13,6 +13,12 @@ const Grid = () => {
     const [generations, setGenerations] = useState(0)
     const [isPlaying, setIsPlaying] = useState(false)
 
+    const [gen, setGen] = useState(0)
+
+    const changeHandler = (e) => {
+        setGen(e.target.value)
+    }
+
     //grid render
     useEffect(() => {
         let newBoxList = []
@@ -66,6 +72,7 @@ const Grid = () => {
     }
 
     const clear = () => {
+        setIsPlaying(false)
         setGrid(new Array(rows).fill(false).map(() => new Array(columns).fill(false)))
         setGenerations(0)
     }
@@ -160,10 +167,37 @@ const Grid = () => {
         setGrid(gridCopy)
     }
 
+    const skipToGeneration = () => {
+        const gridCopy = grid.map(arr => arr.slice(0))
+
+        for(let i = 0; i < gen; i ++) {
+            let neirborsArray = findNeirbors(gridCopy)
+            console.log('neirbors', neirborsArray)
+            let neirborsCount = 0
+            console.log('copy grid', gridCopy)
+            for(let i = 0; i < rows; i++) {
+                for(let j = 0; j < columns; j++) {
+                    //If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
+                    if((gridCopy[i][j] && neirborsArray[neirborsCount] === 0) || (gridCopy[i][j] && neirborsArray[neirborsCount] === 1) || (gridCopy[i][j] && neirborsArray[neirborsCount] > 3)) {
+                        gridCopy[i][j] = false
+                    }
+    
+                    //If the cell is dead and has exactly 3 neighbors, then it comes to life. Else if remains dead.
+                    if(gridCopy[i][j] === false && neirborsArray[neirborsCount] === 3) {
+                        gridCopy[i][j] = true
+                    }
+                    neirborsCount += 1
+                }
+            }
+        }
+        setGrid(gridCopy)
+        setGenerations(parseInt(gen))
+    }
+
     const findNewGrid = () => {
         console.log('findNewGrid ran')
         const gridCopy = grid.map(arr => arr.slice(0))
-        let neirborsArray = findNeirbors()
+        let neirborsArray = findNeirbors(gridCopy)
         let neirborsCount = 0
 
         for(let i = 0; i < rows; i++) {
@@ -183,7 +217,7 @@ const Grid = () => {
         setGrid(gridCopy)
     }
 
-    const findNeirbors = () => {
+    const findNeirbors = (calcGrid) => {
         console.log('findNairbors ran')
         const wholeGridNeirbors = []
 
@@ -192,52 +226,52 @@ const Grid = () => {
                 let count = 0
 
                 //left up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j - 1] === true) {
+                if(calcGrid[i - 1] !== undefined) {
+                    if(calcGrid[i - 1][j - 1] === true) {
                         count += 1
                     }
                 }
                 //left
-                if(grid[i][j - 1] === true) {
+                if(calcGrid[i][j - 1] === true) {
                     count += 1
                 }
 
                 //left down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j - 1] === true) {
+                if(calcGrid[i + 1] !== undefined) {
+                    if(calcGrid[i + 1][j - 1] === true) {
                         count += 1
                     }
                 }
 
                 //down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j] === true) {
+                if(calcGrid[i + 1] !== undefined) {
+                    if(calcGrid[i + 1][j] === true) {
                         count += 1
                     }
                 }
 
                 //right down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j + 1] === true) {
+                if(calcGrid[i + 1] !== undefined) {
+                    if(calcGrid[i + 1][j + 1] === true) {
                         count += 1
                     }
                 }
 
                 //right
-                if(grid[i][j + 1] === true) {
+                if(calcGrid[i][j + 1] === true) {
                     count += 1
                 }
                 
                 //right up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j + 1] === true) {
+                if(calcGrid[i - 1] !== undefined) {
+                    if(calcGrid[i - 1][j + 1] === true) {
                         count += 1
                     }
                 }
 
                 //up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j] === true) {
+                if(calcGrid[i - 1] !== undefined) {
+                    if(calcGrid[i - 1][j] === true) {
                         count += 1
                     }
                 }
@@ -260,23 +294,38 @@ const Grid = () => {
     
 
     return (
-        <div className="grid-container">
-            <h1>Conway's game of life</h1>
-            <p>Generation: {generations}</p>
-            <div className="grid" style={{width: `${rows * 12}px`}}>
-                    {boxList.map(box => {
-                        return box
-                    })}
+        <div className="game-container">
+            <div className="info-container">
+                <h1>Conway's game of life</h1>
+                <h2>Rules:</h2>
+                <p>If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.</p>
+                <p>If the cell is dead and has exactly 3 neighbors, then it comes to life. Else it remains dead.</p>
             </div>
-            <div className="buttons">
-                <h2 onClick={play}>Play</h2>
-                <h2 onClick={pause}>Pause</h2>
-                <h2 onClick={stepThrough}>Next</h2>
-                <h2 onClick={clear}>Clear</h2>
-                <h2 onClick={glider}>Glider</h2>
-                <h2 onClick={exploder}>Exploder</h2>
-                <h2 onClick={gosperGliderGun}>Gosper Glider Gun</h2>
-                <h2 onClick={random}>Random</h2>
+            <div className="grid-container">
+                <p>Generation: {generations}</p>
+                <div className="main-btns">
+                    <button type="button" className="nes-btn is-primary" onClick={play}>Play</button>
+                    <button type="button" className="nes-btn is-error" onClick={pause}>Pause</button>
+                    <button type="button" className="nes-btn is-success" onClick={stepThrough}>Next</button>
+                    <button type="button" className="nes-btn" onClick={clear}>Clear</button>
+                </div>
+                <div className="grid-btns">
+                    <div className="grid nes-container is-dark" style={{width: `${rows * 12.1}px`}}>
+                            {boxList.map(box => {
+                                return box
+                            })}
+                    </div>
+                    <div className="buttons">
+                        <button type="button" className="nes-btn is-warning" onClick={glider}>Glider</button>
+                        <button type="button" className="nes-btn is-warning" onClick={exploder}>Exploder</button>
+                        <button type="button" className="nes-btn is-warning" onClick={gosperGliderGun}>Glider Gun</button>
+                        <button type="button" className="nes-btn is-warning" onClick={random}>Random</button>
+                    </div>
+                </div>
+                <div className="skip-btn">
+                    <input onChange={changeHandler} placeholder="skip to generation"/>
+                    <button type="button" className="nes-btn is-primary" onClick={skipToGeneration}>Skip</button>
+                </div>
             </div>
         </div>
     )
