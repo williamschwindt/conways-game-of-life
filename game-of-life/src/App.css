@@ -36,17 +36,20 @@ button:hover {
     width: 80%;
 }
 
+.info-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 90%;
+}
+
 .info-container h2 {
     margin-bottom: 15px;
+    width: 90%;
 }
 
 .info-container p{
     width: 80%;
     margin-bottom: 20px;
-}
-
-.grid-container {
-
 }
 
 .grid-btns {
