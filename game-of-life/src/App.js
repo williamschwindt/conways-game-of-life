@@ -1,10 +1,10 @@
 import React from 'react';
 import './App.css';
-import Home from './components/Home'
+import Grid from './components/Grid'
 
 function App() {
   return (
-    <Home/>
+    <Grid/>
   );
 }
 

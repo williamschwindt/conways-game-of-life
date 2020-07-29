@@ -21,8 +21,8 @@ const Grid = () => {
     //grid render
     useEffect(() => {
         let newBoxList = []
-        for(let i = 0; i < grid.length; i++) {
-            for(let j = 0; j < grid[i].length; j++) {
+        for(let i = 0; i < rows; i++) {
+            for(let j = 0; j < columns; j++) {
     
                 let box = <Box key={`${i}_${j}`} setBoxStatus={setBoxStatus} boxClass={grid[i][j] ? 'box-alive' : 'box-dead'} id={`${i}_${j}`} row={i} column={j} />
     
@@ -58,7 +58,7 @@ const Grid = () => {
     }
 
     const stepThrough = () => {
-        findNewGrid()
+        placeNewGrid(findNewGrid())
     }
 
     const clear = () => {
@@ -94,137 +94,106 @@ const Grid = () => {
         setGrid(gridCopy)
     }
 
-    //creates a copy of the grid and loops through the games logic until the grid at the specified generation is found
-    //counts the generation currently on as gen 0
+    //loops through the games logic until the grid at the specified generation is found
+    // counts the generation currently on as gen 0
     const skipToGeneration = () => {
-        const gridCopy = grid.map(arr => arr.slice(0))
-
+        let newGrid
         for(let i = 0; i < gen; i ++) {
-            let neighborsArray = findNeighbors(gridCopy)
-            let neighborsCount = 0
-
-            for(let i = 0; i < rows; i++) {
-                for(let j = 0; j < columns; j++) {
-                    //If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
-                    if((gridCopy[i][j] && neighborsArray[neighborsCount] === 0) || (gridCopy[i][j] && neighborsArray[neighborsCount] === 1) || (gridCopy[i][j] && neighborsArray[neighborsCount] > 3)) {
-                        gridCopy[i][j] = false
-                    }
-    
-                    //If the cell is dead and has exactly 3 neighbors, then it comes to life. Else if remains dead.
-                    if(gridCopy[i][j] === false && neighborsArray[neighborsCount] === 3) {
-                        gridCopy[i][j] = true
-                    }
-                    neighborsCount += 1
-                }
-            }
+            newGrid = findNewGrid()
         }
-        setGrid(gridCopy)
-        setGenerations(parseInt(gen))
+        placeNewGrid(newGrid)
     }
 
-    //creates copy grid, performs games logic, sets copy grid to state
+    //loops through every cell to calculate neighbors then perfors games logic on cell
     const findNewGrid = () => {
-        console.log('findNewGrid ran')
-        const gridCopy = grid.map(arr => arr.slice(0))
-        let neighborsArray = findNeighbors(gridCopy)
-        let neighborsCount = 0
-
-        for(let i = 0; i < rows; i++) {
-            for(let j = 0; j < columns; j++) {
-                //If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
-                if((gridCopy[i][j] && neighborsArray[neighborsCount] === 0) || (gridCopy[i][j] && neighborsArray[neighborsCount] === 1) || (gridCopy[i][j] && neighborsArray[neighborsCount] > 3)) {
-                    gridCopy[i][j] = false
-                }
-
-                //If the cell is dead and has exactly 3 neighbors, then it comes to life. Else if remains dead.
-                if(gridCopy[i][j] === false && neighborsArray[neighborsCount] === 3) {
-                    gridCopy[i][j] = true
-                }
-                neighborsCount += 1
-            }
-        }
-        setGrid(gridCopy)
-    }
-
-    //loops through entire grid and returns an array of each cells neighbors
-    const findNeighbors = (calcGrid) => {
         console.log('findNairbors ran')
-        const wholeGridNeighbors = []
+
+        const copyGrid = grid.map(arr => arr.slice(0))
 
         for(let i = 0; i < rows; i++) {
             for(let j = 0; j < columns; j++) {
                 let count = 0
 
                 //left up
-                if(calcGrid[i - 1] !== undefined) {
-                    if(calcGrid[i - 1][j - 1] === true) {
+                if(grid[i - 1] !== undefined) {
+                    if(grid[i - 1][j - 1] === true) {
                         count += 1
                     }
                 }
                 //left
-                if(calcGrid[i][j - 1] === true) {
+                if(grid[i][j - 1] === true) {
                     count += 1
                 }
 
                 //left down
-                if(calcGrid[i + 1] !== undefined) {
-                    if(calcGrid[i + 1][j - 1] === true) {
+                if(grid[i + 1] !== undefined) {
+                    if(grid[i + 1][j - 1] === true) {
                         count += 1
                     }
                 }
 
                 //down
-                if(calcGrid[i + 1] !== undefined) {
-                    if(calcGrid[i + 1][j] === true) {
+                if(grid[i + 1] !== undefined) {
+                    if(grid[i + 1][j] === true) {
                         count += 1
                     }
                 }
 
                 //right down
-                if(calcGrid[i + 1] !== undefined) {
-                    if(calcGrid[i + 1][j + 1] === true) {
+                if(grid[i + 1] !== undefined) {
+                    if(grid[i + 1][j + 1] === true) {
                         count += 1
                     }
                 }
 
                 //right
-                if(calcGrid[i][j + 1] === true) {
+                if(grid[i][j + 1] === true) {
                     count += 1
                 }
                 
                 //right up
-                if(calcGrid[i - 1] !== undefined) {
-                    if(calcGrid[i - 1][j + 1] === true) {
+                if(grid[i - 1] !== undefined) {
+                    if(grid[i - 1][j + 1] === true) {
                         count += 1
                     }
                 }
 
                 //up
-                if(calcGrid[i - 1] !== undefined) {
-                    if(calcGrid[i - 1][j] === true) {
+                if(grid[i - 1] !== undefined) {
+                    if(grid[i - 1][j] === true) {
                         count += 1
                     }
                 }
 
-                wholeGridNeighbors.push(count)
+                //If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
+                if((grid[i][j] && count === 0) || (grid[i][j] && count === 1) || (grid[i][j] && count > 3)) {
+                    copyGrid[i][j] = false
+                }
+
+                //If the cell is dead and has exactly 3 neighbors, then it comes to life. Else if remains dead.
+                if(grid[i][j] === false && count === 3) {
+                    copyGrid[i][j] = true
+                }
             }
         }
-        return wholeGridNeighbors
+        return copyGrid
+    }
+
+    const placeNewGrid = (newGrid) => {
+        setGenerations(generations + 1)
+        setGrid(newGrid)
     }
 
     //main game loop
-    //sets interval that calls findNewGrid
     useEffect(() => {
         if(isPlaying) {
             const interval = setInterval(() => {
-                findNewGrid()
-                setGenerations(generations + 1)
-            }, 100)
+                placeNewGrid(findNewGrid())
+            }, 10)
             return () => clearInterval(interval)
         }
     })
     
-
     return (
         <div className="game-container">
             <div className="info-container">
