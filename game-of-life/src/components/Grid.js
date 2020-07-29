@@ -10,10 +10,8 @@ const Grid = () => {
     const [grid, setGrid] = useState(new Array(rows).fill(false).map(() => new Array(columns).fill(false)))
     console.log(grid)
     const [boxList, setBoxList] = useState([])
-
     const [generations, setGenerations] = useState(0)
     const [isPlaying, setIsPlaying] = useState(false)
-
     const [gen, setGen] = useState(0)
 
     const changeHandler = (e) => {
@@ -29,7 +27,6 @@ const Grid = () => {
                 let box = <Box key={`${i}_${j}`} setBoxStatus={setBoxStatus} boxClass={grid[i][j] ? 'box-alive' : 'box-dead'} id={`${i}_${j}`} row={i} column={j} />
     
                 newBoxList.push(box)
-
             }
         }
         setBoxList(newBoxList)
@@ -51,15 +48,7 @@ const Grid = () => {
         setGrid(gridCopy)
     }
 
-    /*
-    play button
-        tell every cell that it can no longer be clicked
-        timeout function
-            copy current grid
-            apply rules to copy grid
-            set copy grid to state
-    */
-
+    //buttons and patterns
     const play = () => {
         setIsPlaying(true)
     }
@@ -78,6 +67,7 @@ const Grid = () => {
         setGenerations(0)
     }
 
+    //patterns in seperate file
     const setGlider = () => {
         setGrid(glider(grid))
     }
@@ -104,26 +94,27 @@ const Grid = () => {
         setGrid(gridCopy)
     }
 
+    //creates a copy of the grid and loops through the games logic until the grid at the specified generation is found
+    //counts the generation currently on as gen 0
     const skipToGeneration = () => {
         const gridCopy = grid.map(arr => arr.slice(0))
 
         for(let i = 0; i < gen; i ++) {
-            let neirborsArray = findNeirbors(gridCopy)
-            console.log('neirbors', neirborsArray)
-            let neirborsCount = 0
-            console.log('copy grid', gridCopy)
+            let neighborsArray = findNeighbors(gridCopy)
+            let neighborsCount = 0
+
             for(let i = 0; i < rows; i++) {
                 for(let j = 0; j < columns; j++) {
                     //If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
-                    if((gridCopy[i][j] && neirborsArray[neirborsCount] === 0) || (gridCopy[i][j] && neirborsArray[neirborsCount] === 1) || (gridCopy[i][j] && neirborsArray[neirborsCount] > 3)) {
+                    if((gridCopy[i][j] && neighborsArray[neighborsCount] === 0) || (gridCopy[i][j] && neighborsArray[neighborsCount] === 1) || (gridCopy[i][j] && neighborsArray[neighborsCount] > 3)) {
                         gridCopy[i][j] = false
                     }
     
                     //If the cell is dead and has exactly 3 neighbors, then it comes to life. Else if remains dead.
-                    if(gridCopy[i][j] === false && neirborsArray[neirborsCount] === 3) {
+                    if(gridCopy[i][j] === false && neighborsArray[neighborsCount] === 3) {
                         gridCopy[i][j] = true
                     }
-                    neirborsCount += 1
+                    neighborsCount += 1
                 }
             }
         }
@@ -131,32 +122,34 @@ const Grid = () => {
         setGenerations(parseInt(gen))
     }
 
+    //creates copy grid, performs games logic, sets copy grid to state
     const findNewGrid = () => {
         console.log('findNewGrid ran')
         const gridCopy = grid.map(arr => arr.slice(0))
-        let neirborsArray = findNeirbors(gridCopy)
-        let neirborsCount = 0
+        let neighborsArray = findNeighbors(gridCopy)
+        let neighborsCount = 0
 
         for(let i = 0; i < rows; i++) {
             for(let j = 0; j < columns; j++) {
                 //If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
-                if((gridCopy[i][j] && neirborsArray[neirborsCount] === 0) || (gridCopy[i][j] && neirborsArray[neirborsCount] === 1) || (gridCopy[i][j] && neirborsArray[neirborsCount] > 3)) {
+                if((gridCopy[i][j] && neighborsArray[neighborsCount] === 0) || (gridCopy[i][j] && neighborsArray[neighborsCount] === 1) || (gridCopy[i][j] && neighborsArray[neighborsCount] > 3)) {
                     gridCopy[i][j] = false
                 }
 
                 //If the cell is dead and has exactly 3 neighbors, then it comes to life. Else if remains dead.
-                if(gridCopy[i][j] === false && neirborsArray[neirborsCount] === 3) {
+                if(gridCopy[i][j] === false && neighborsArray[neighborsCount] === 3) {
                     gridCopy[i][j] = true
                 }
-                neirborsCount += 1
+                neighborsCount += 1
             }
         }
         setGrid(gridCopy)
     }
 
-    const findNeirbors = (calcGrid) => {
+    //loops through entire grid and returns an array of each cells neighbors
+    const findNeighbors = (calcGrid) => {
         console.log('findNairbors ran')
-        const wholeGridNeirbors = []
+        const wholeGridNeighbors = []
 
         for(let i = 0; i < rows; i++) {
             for(let j = 0; j < columns; j++) {
@@ -213,12 +206,14 @@ const Grid = () => {
                     }
                 }
 
-                wholeGridNeirbors.push(count)
+                wholeGridNeighbors.push(count)
             }
         }
-        return wholeGridNeirbors
+        return wholeGridNeighbors
     }
 
+    //main game loop
+    //sets interval that calls findNewGrid
     useEffect(() => {
         if(isPlaying) {
             const interval = setInterval(() => {
