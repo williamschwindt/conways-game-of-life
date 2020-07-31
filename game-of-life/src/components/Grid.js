@@ -8,14 +8,18 @@ const Grid = () => {
 
     // 2D array
     const [grid, setGrid] = useState(new Array(rows).fill(false).map(() => new Array(columns).fill(false)))
-    console.log(grid)
     const [boxList, setBoxList] = useState([])
     const [generations, setGenerations] = useState(0)
     const [isPlaying, setIsPlaying] = useState(false)
     const [gen, setGen] = useState(0)
+    const [speed, setSpeed] = useState(100)
 
     const changeHandler = (e) => {
         setGen(e.target.value)
+    }
+
+    const changeSpeed = (e) => {
+        setSpeed(e.target.value)
     }
 
     //grid render
@@ -35,9 +39,7 @@ const Grid = () => {
 
     //update cell on click, sets new grid, triggers grid rerender
     function setBoxStatus(row, column) {
-        console.log("setBoxStatus ran")
         const gridCopy = grid.map(arr => arr.slice(0))
-        console.log(gridCopy)
         
         if (gridCopy[row][column]) {
             gridCopy[row][column] = false
@@ -58,7 +60,7 @@ const Grid = () => {
     }
 
     const stepThrough = () => {
-        placeNewGrid(findNewGrid())
+        placeNewGrid(findNewGrid(grid))
     }
 
     const clear = () => {
@@ -97,81 +99,80 @@ const Grid = () => {
     //loops through the games logic until the grid at the specified generation is found
     // counts the generation currently on as gen 0
     const skipToGeneration = () => {
-        let newGrid
+        let copyGrid = grid
         for(let i = 0; i < gen; i ++) {
-            newGrid = findNewGrid()
+            copyGrid = findNewGrid(copyGrid)
         }
-        placeNewGrid(newGrid)
+        setGrid(copyGrid)
+        setGenerations(generations + parseInt(gen))
     }
 
     //loops through every cell to calculate neighbors then perfors games logic on cell
-    const findNewGrid = () => {
-        console.log('findNairbors ran')
-
-        const copyGrid = grid.map(arr => arr.slice(0))
+    const findNewGrid = (oldGrid) => {
+        const copyGrid = oldGrid.map(arr => arr.slice(0))
 
         for(let i = 0; i < rows; i++) {
             for(let j = 0; j < columns; j++) {
                 let count = 0
 
                 //left up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j - 1] === true) {
+                if(oldGrid[i - 1] !== undefined) {
+                    if(oldGrid[i - 1][j - 1] === true) {
                         count += 1
                     }
                 }
                 //left
-                if(grid[i][j - 1] === true) {
+                if(oldGrid[i][j - 1] === true) {
                     count += 1
                 }
 
                 //left down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j - 1] === true) {
+                if(oldGrid[i + 1] !== undefined) {
+                    if(oldGrid[i + 1][j - 1] === true) {
                         count += 1
                     }
                 }
 
                 //down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j] === true) {
+                if(oldGrid[i + 1] !== undefined) {
+                    if(oldGrid[i + 1][j] === true) {
                         count += 1
                     }
                 }
 
                 //right down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j + 1] === true) {
+                if(oldGrid[i + 1] !== undefined) {
+                    if(oldGrid[i + 1][j + 1] === true) {
                         count += 1
                     }
                 }
 
                 //right
-                if(grid[i][j + 1] === true) {
+                if(oldGrid[i][j + 1] === true) {
                     count += 1
                 }
                 
                 //right up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j + 1] === true) {
+                if(oldGrid[i - 1] !== undefined) {
+                    if(oldGrid[i - 1][j + 1] === true) {
                         count += 1
                     }
                 }
 
                 //up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j] === true) {
+                if(oldGrid[i - 1] !== undefined) {
+                    if(oldGrid[i - 1][j] === true) {
                         count += 1
                     }
                 }
 
                 //If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
-                if((grid[i][j] && count === 0) || (grid[i][j] && count === 1) || (grid[i][j] && count > 3)) {
+                if((oldGrid[i][j] && count === 0) || (oldGrid[i][j] && count === 1) || (oldGrid[i][j] && count > 3)) {
                     copyGrid[i][j] = false
                 }
 
                 //If the cell is dead and has exactly 3 neighbors, then it comes to life. Else if remains dead.
-                if(grid[i][j] === false && count === 3) {
+                if(oldGrid[i][j] === false && count === 3) {
                     copyGrid[i][j] = true
                 }
             }
@@ -188,8 +189,8 @@ const Grid = () => {
     useEffect(() => {
         if(isPlaying) {
             const interval = setInterval(() => {
-                placeNewGrid(findNewGrid())
-            }, 10)
+                placeNewGrid(findNewGrid(grid))
+            }, speed)
             return () => clearInterval(interval)
         }
     })
@@ -209,6 +210,10 @@ const Grid = () => {
                     <button type="button" className="nes-btn is-error" onClick={pause}>Pause</button>
                     <button type="button" className="nes-btn is-success" onClick={stepThrough}>Next</button>
                     <button type="button" className="nes-btn" onClick={clear}>Clear</button>
+                    <div className="speed-box">
+                        <h3>Speed</h3>
+                        <input type="range" min="10" max="1000" value={speed} onChange={changeSpeed}/>
+                    </div>
                 </div>
                 <div className="grid-btns">
                     <div className="grid nes-container is-dark" style={{width: `${rows * 12.1}px`}}>
