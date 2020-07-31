@@ -77,14 +77,21 @@ button:hover {
 .buttons button,
 .buttons input {
     font-size: 1.2rem;
+    margin-bottom: 10px;
 }
 
 .main-btns {
     margin-bottom: 5px;
+    display: flex;
 }
 
 .main-btns button {
     font-size: 1rem;
+    margin-right: 10px;
+}
+
+.main-btns input {
+    direction: rtl;
 }
 
 .skip-btn {

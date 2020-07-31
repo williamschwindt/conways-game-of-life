@@ -58,7 +58,7 @@ const Grid = () => {
     }
 
     const stepThrough = () => {
-        placeNewGrid(findNewGrid())
+        placeNewGrid(findNewGrid(grid))
     }
 
     const clear = () => {
@@ -97,81 +97,82 @@ const Grid = () => {
     //loops through the games logic until the grid at the specified generation is found
     // counts the generation currently on as gen 0
     const skipToGeneration = () => {
-        let newGrid
+        let copyGrid = grid
         for(let i = 0; i < gen; i ++) {
-            newGrid = findNewGrid()
+            copyGrid = findNewGrid(copyGrid)
         }
-        placeNewGrid(newGrid)
+        setGrid(copyGrid)
+        setGenerations(generations + parseInt(gen))
     }
 
     //loops through every cell to calculate neighbors then perfors games logic on cell
-    const findNewGrid = () => {
+    const findNewGrid = (oldGrid) => {
         console.log('findNairbors ran')
 
-        const copyGrid = grid.map(arr => arr.slice(0))
+        const copyGrid = oldGrid.map(arr => arr.slice(0))
 
         for(let i = 0; i < rows; i++) {
             for(let j = 0; j < columns; j++) {
                 let count = 0
 
                 //left up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j - 1] === true) {
+                if(oldGrid[i - 1] !== undefined) {
+                    if(oldGrid[i - 1][j - 1] === true) {
                         count += 1
                     }
                 }
                 //left
-                if(grid[i][j - 1] === true) {
+                if(oldGrid[i][j - 1] === true) {
                     count += 1
                 }
 
                 //left down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j - 1] === true) {
+                if(oldGrid[i + 1] !== undefined) {
+                    if(oldGrid[i + 1][j - 1] === true) {
                         count += 1
                     }
                 }
 
                 //down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j] === true) {
+                if(oldGrid[i + 1] !== undefined) {
+                    if(oldGrid[i + 1][j] === true) {
                         count += 1
                     }
                 }
 
                 //right down
-                if(grid[i + 1] !== undefined) {
-                    if(grid[i + 1][j + 1] === true) {
+                if(oldGrid[i + 1] !== undefined) {
+                    if(oldGrid[i + 1][j + 1] === true) {
                         count += 1
                     }
                 }
 
                 //right
-                if(grid[i][j + 1] === true) {
+                if(oldGrid[i][j + 1] === true) {
                     count += 1
                 }
                 
                 //right up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j + 1] === true) {
+                if(oldGrid[i - 1] !== undefined) {
+                    if(oldGrid[i - 1][j + 1] === true) {
                         count += 1
                     }
                 }
 
                 //up
-                if(grid[i - 1] !== undefined) {
-                    if(grid[i - 1][j] === true) {
+                if(oldGrid[i - 1] !== undefined) {
+                    if(oldGrid[i - 1][j] === true) {
                         count += 1
                     }
                 }
 
                 //If the cell is alive and has 2 or 3 neighbors, then it remains alive. Else it dies.
-                if((grid[i][j] && count === 0) || (grid[i][j] && count === 1) || (grid[i][j] && count > 3)) {
+                if((oldGrid[i][j] && count === 0) || (oldGrid[i][j] && count === 1) || (oldGrid[i][j] && count > 3)) {
                     copyGrid[i][j] = false
                 }
 
                 //If the cell is dead and has exactly 3 neighbors, then it comes to life. Else if remains dead.
-                if(grid[i][j] === false && count === 3) {
+                if(oldGrid[i][j] === false && count === 3) {
                     copyGrid[i][j] = true
                 }
             }
@@ -188,7 +189,7 @@ const Grid = () => {
     useEffect(() => {
         if(isPlaying) {
             const interval = setInterval(() => {
-                placeNewGrid(findNewGrid())
+                placeNewGrid(findNewGrid(grid))
             }, 10)
             return () => clearInterval(interval)
         }
