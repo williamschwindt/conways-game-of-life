@@ -8,14 +8,18 @@ const Grid = () => {
 
     // 2D array
     const [grid, setGrid] = useState(new Array(rows).fill(false).map(() => new Array(columns).fill(false)))
-    console.log(grid)
     const [boxList, setBoxList] = useState([])
     const [generations, setGenerations] = useState(0)
     const [isPlaying, setIsPlaying] = useState(false)
     const [gen, setGen] = useState(0)
+    const [speed, setSpeed] = useState(100)
 
     const changeHandler = (e) => {
         setGen(e.target.value)
+    }
+
+    const changeSpeed = (e) => {
+        setSpeed(e.target.value)
     }
 
     //grid render
@@ -35,9 +39,7 @@ const Grid = () => {
 
     //update cell on click, sets new grid, triggers grid rerender
     function setBoxStatus(row, column) {
-        console.log("setBoxStatus ran")
         const gridCopy = grid.map(arr => arr.slice(0))
-        console.log(gridCopy)
         
         if (gridCopy[row][column]) {
             gridCopy[row][column] = false
@@ -107,8 +109,6 @@ const Grid = () => {
 
     //loops through every cell to calculate neighbors then perfors games logic on cell
     const findNewGrid = (oldGrid) => {
-        console.log('findNairbors ran')
-
         const copyGrid = oldGrid.map(arr => arr.slice(0))
 
         for(let i = 0; i < rows; i++) {
@@ -190,7 +190,7 @@ const Grid = () => {
         if(isPlaying) {
             const interval = setInterval(() => {
                 placeNewGrid(findNewGrid(grid))
-            }, 10)
+            }, speed)
             return () => clearInterval(interval)
         }
     })
@@ -210,6 +210,10 @@ const Grid = () => {
                     <button type="button" className="nes-btn is-error" onClick={pause}>Pause</button>
                     <button type="button" className="nes-btn is-success" onClick={stepThrough}>Next</button>
                     <button type="button" className="nes-btn" onClick={clear}>Clear</button>
+                    <div className="speed-box">
+                        <h3>Speed</h3>
+                        <input type="range" min="10" max="1000" value={speed} onChange={changeSpeed}/>
+                    </div>
                 </div>
                 <div className="grid-btns">
                     <div className="grid nes-container is-dark" style={{width: `${rows * 12.1}px`}}>
