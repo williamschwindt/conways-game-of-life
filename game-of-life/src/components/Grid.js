@@ -22,7 +22,7 @@ const Grid = () => {
         setSpeed(e.target.value)
     }
 
-    //grid render
+    // grid render
     useEffect(() => {
         let newBoxList = []
         for(let i = 0; i < rows; i++) {
@@ -99,7 +99,7 @@ const Grid = () => {
     //loops through the games logic until the grid at the specified generation is found
     // counts the generation currently on as gen 0
     const skipToGeneration = () => {
-        let copyGrid = grid
+        let copyGrid = grid.map(arr => arr.slice(0))
         for(let i = 0; i < gen; i ++) {
             copyGrid = findNewGrid(copyGrid)
         }
@@ -193,7 +193,7 @@ const Grid = () => {
             }, speed)
             return () => clearInterval(interval)
         }
-    })
+    }, [grid, isPlaying])
     
     return (
         <div className="game-container">
@@ -217,9 +217,18 @@ const Grid = () => {
                 </div>
                 <div className="grid-btns">
                     <div className="grid nes-container is-dark" style={{width: `${rows * 12.1}px`}}>
-                            {boxList.map(box => {
-                                return box
-                            })}
+                        {boxList}
+                            {/* {grid.map((rows, i) => {
+                                return (
+                                    <>
+                                    {rows.map((colums, j) => {
+                                        return (
+                                            <Box key={`${i}_${j}`} setBoxStatus={setBoxStatus} boxClass={grid[i][j] ? 'box-alive' : 'box-dead'} id={`${i}_${j}`} row={i} column={j} />
+                                        )
+                                    })}
+                                    </>
+                                )
+                            })} */}
                     </div>
                     <div className="buttons">
                         <button type="button" className="nes-btn is-warning" onClick={setGlider}>Glider</button>
